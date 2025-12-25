@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشاور یار - مشاوره خانواده با هوش مصنوعی</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* فونت ایران سنس */
+        @font-face {
+            font-family: 'IRANSans';
+            src: url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.eot');
+            src: url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.eot?#iefix') format('embedded-opentype'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.woff2') format('woff2'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.woff') format('woff'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        :root {
+            --primary-color: #1abc9c; /* فیروزه ای اصلی */
+            --primary-dark: #16a085;
+            --primary-light: #48c9b0;
+            --secondary-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --gray-color: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'IRANSans', sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* هدر و منو */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-right: 10px;
+        }
+        
+        .logo i {
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-right: 25px;
+        }
+        
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        nav ul li a.active {
+            color: var(--primary-color);
+        }
+        
+        nav ul li a.active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: -5px;
+            right: 0;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+        
+        /* بخش هیرو */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* بخش مشاوره هوش مصنوعی */
+        .ai-consultation {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            color: var(--secondary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .ai-message {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .user-message .message-content {
+            background-color: var(--primary-light);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .ai-message .message-content {
+            background-color: white;
+            color: #333;
+            border: 1px solid #eee;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+        
+        .chat-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-input button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* بخش معرفی */
+        .intro-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .intro-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .intro-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .card-header i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .card-body h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .card-body ul {
+            list-style-position: inside;
+            margin-right: 15px;
+        }
+        
+        .card-body li {
+            margin-bottom: 10px;
+        }
+        
+        /* فوتر */
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .footer-logo h2 {
+            color: var(--primary-light);
+            font-size: 1.8rem;
+        }
+        
+        .footer-info p {
+            margin-bottom: 10px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+        
+        /* ریسپانسیو */
+        @media (max-width: 992px) {
+            .intro-cards {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px 10px;
+            }
+            
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-logo {
+                margin-bottom: 20px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                left: 20px;
+                top: 20px;
+            }
+            
+            .desktop-menu {
+                display: none;
+            }
+            
+            .mobile-menu.active {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-top: 15px;
+            }
+            
+            .mobile-menu.active ul {
+                flex-direction: column;
+            }
+            
+            .mobile-menu.active ul li {
+                margin: 10px 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .ai-consultation {
+                padding: 20px;
+            }
+            
+            .chat-container {
+                height: 400px;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .intro-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- هدر و منو -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="bi bi-chat-heart-fill"></i>
+                    <h1>مشاور یار</h1>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="bi bi-list"></i>
+                </button>
+                
+                <nav class="desktop-menu">
+                    <ul>
+                        <li><a href="#home" class="active">خانه</a></li>
+                        <li><a href="#services">معرفی خدمات</a></li>
+                        <li><a href="#courses">معرفی دوره‌ها</a></li>
+                        <li><a href="#consultants">معرفی مشاوران برتر</a></li>
+                    </ul>
+                </nav>
+                
+                <nav class="mobile-menu" id="mobileMenu">
+                    <ul>
+                        <li><a href="#home" class="active">خانه</a></li>
+                        <li><a href="#services">معرفی خدمات</a></li>
+                        <li><a href="#courses">معرفی دوره‌ها</a></li>
+                        <li><a href="#consultants">معرفی مشاوران برتر</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- بخش اصلی -->
+    <main>
+        <!-- بخش هیرو -->
+        <section class="hero" id="home">
+            <div class="container">
+                <h2>مشاوره خانواده هوشمند با DeepSeek</h2>
+                <p>با کمک هوش مصنوعی DeepSeek، راهکارهای تخصصی و کاربردی برای مسائل خانوادگی خود دریافت کنید. کافیست سوال خود را بپرسید.</p>
+                <div style="background-color: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; display: inline-block;">
+                    <p><i class="bi bi-info-circle"></i> این سرویس از هوش مصنوعی DeepSeek برای ارائه مشاوره استفاده می‌کند</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- بخش مشاوره هوش مصنوعی -->
+        <section class="ai-consultation">
+            <div class="container">
+                <h2 class="section-title">مشاوره هوش مصنوعی</h2>
+                <p style="text-align: center; margin-bottom: 20px; color: var(--gray-color);">سوالات خود در مورد مسائل خانوادگی را مطرح کنید تا راهکارهای عملی دریافت کنید</p>
+                
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <i class="bi bi-robot"></i> مشاور هوشمند DeepSeek
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                سلام! من مشاور هوشمند شما هستم. چگونه می‌توانم در مسائل خانوادگی به شما کمک کنم؟ می‌توانید سوالات خود را در زمینه ارتباط با همسر، تربیت فرزندان، حل تعارضات خانوادگی و سایر مسائل مطرح کنید.
+                            </div>
+                        </div>
+                        
+                        <div class="message user-message">
+                            <div class="message-content">
+                                چگونه می‌توانم ارتباط بهتری با نوجوانم داشته باشم؟
+                            </div>
+                        </div>
+                        
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                برای بهبود ارتباط با نوجوانتان:
+                                1. زمان مشخصی را برای گفتگو بدون قضاوت اختصاص دهید
+                                2. به احساساتش احترام بگذارید و گوش دادن فعال را تمرین کنید
+                                3. قوانین واضح و منطقی تعیین کنید اما انعطاف‌پذیر باشید
+                                4. علایق و دوستانش را بشناسید
+                                5. او را در تصمیم‌گیری‌های خانوادگی مشارکت دهید
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="userInput" placeholder="سوال خود را در زمینه خانواده مطرح کنید...">
+                        <button id="sendButton">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                    <button class="suggestion-btn" data-question="چگونه تعارض با همسرم را مدیریت کنم؟">مدیریت تعارض با همسر</button>
+                    <button class="suggestion-btn" data-question="برای بهبود رابطه والدین با فرزندان چه کنیم؟">رابطه والدین و فرزندان</button>
+                    <button class="suggestion-btn" data-question="چگونه استرس زندگی مشترک را کاهش دهیم؟">کاهش استرس زندگی مشترک</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- بخش معرفی خدمات -->
+        <section id="services">
+            <div class="container">
+                <h2 class="section-title">معرفی خدمات</h2>
+                
+                <div class="intro-cards">
+                    <div class="intro-card">
+                        <div class="card-header">
+                            <i class="bi bi-chat-dots"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>مشاوره آنلاین خانواده</h3>
+                            <ul>
+                                <li>مشاوره تخصصی زوجین و حل تعارضات زناشویی</li>
+                                <li>مشاوره تربیت کودک و نوجوان</li>
+                                <li>راهکارهای بهبود ارتباطات خانوادگی</li>
+                                <li>مشاوره پیش از ازدواج</li>
+                                <li>مدیریت بحران‌های خانوادگی</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header">
+                            <i class="bi bi-robot"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>مشاوره هوش مصنوعی</h3>
+                            <ul>
+                                <li>پاسخگویی ۲۴ ساعته به سوالات خانوادگی</li>
+                                <li>ارائه راهکارهای مبتنی بر علم روانشناسی</li>
+                                <li>مشاوره محرمانه و بدون قضاوت</li>
+                                <li>پشتیبانی از سوالات تخصصی</li>
+                                <li>یادگیری مداوم و به روزرسانی دانش</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>کارگاه‌های عملی</h3>
+                            <ul>
+                                <li>کارگاه مهارت‌های ارتباط موثر در خانواده</li>
+                                <li>دوره تربیت فرزند با رویکرد مثبت</li>
+                                <li>سمینار مدیریت خشم و کنترل استرس</li>
+                                <li>کارگاه حل تعارض و مذاکره در خانواده</li>
+                                <li>دوره تقویت رابطه زناشویی</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- بخش معرفی دوره‌ها -->
+        <section id="courses" style="background-color: #f5f5f5; padding: 50px 0;">
+            <div class="container">
+                <h2 class="section-title">معرفی دوره‌ها</h2>
+                
+                <div class="intro-cards">
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--primary-dark);">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>دوره ارتباط موثر در خانواده</h3>
+                            <ul>
+                                <li>مدت زمان: ۸ جلسه ۲ ساعته</li>
+                                <li>مدرس: دکتر سارا محمدی</li>
+                                <li>مخاطبان: زوجین و والدین</li>
+                                <li>روزهای برگزاری: یکشنبه و سه‌شنبه</li>
+                                <li>شروع: ۱۵ مرداد ۱۴۰۳</li>
+                            </ul>
+                            <button class="register-btn" style="background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-top: 15px; cursor: pointer;">ثبت نام در دوره</button>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--primary-dark);">
+                            <i class="bi bi-emoji-smile"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>کارگاه تربیت کودک شاد</h3>
+                            <ul>
+                                <li>مدت زمان: ۶ جلسه ۱.۵ ساعته</li>
+                                <li>مدرس: دکتر امیر حسینی</li>
+                                <li>مخاطبان: والدین کودکان ۳ تا ۱۲ سال</li>
+                                <li>روزهای برگزاری: دوشنبه‌ها</li>
+                                <li>شروع: ۲۰ مرداد ۱۴۰۳</li>
+                            </ul>
+                            <button class="register-btn" style="background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-top: 15px; cursor: pointer;">ثبت نام در دوره</button>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--primary-dark);">
+                            <i class="bi bi-heart-fill"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>دوره پیش از ازدواج</h3>
+                            <ul>
+                                <li>مدت زمان: ۱۰ جلسه ۲ ساعته</li>
+                                <li>مدرس: دکتر مریم رضایی</li>
+                                <li>مخاطبان: زوج‌های در آستانه ازدواج</li>
+                                <li>روزهای برگزاری: پنجشنبه‌ها</li>
+                                <li>شروع: ۱۰ شهریور ۱۴۰۳</li>
+                            </ul>
+                            <button class="register-btn" style="background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%; margin-top: 15px; cursor: pointer;">ثبت نام در دوره</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- بخش معرفی مشاوران برتر -->
+        <section id="consultants" style="padding: 50px 0;">
+            <div class="container">
+                <h2 class="section-title">معرفی مشاوران برتر</h2>
+                
+                <div class="intro-cards">
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--dark-color);">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>دکتر سارا محمدی</h3>
+                            <p><strong>تخصص:</strong> مشاوره خانواده و زوج‌درمانی</p>
+                            <p><strong>سابقه کار:</strong> ۱۵ سال</p>
+                            <p><strong>تحصیلات:</strong> دکترای روانشناسی خانواده از دانشگاه تهران</p>
+                            <p><strong>حوزه‌های تخصصی:</strong> حل تعارض زناشویی، بهبود ارتباطات خانوادگی</p>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--dark-color);">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>دکتر امیر حسینی</h3>
+                            <p><strong>تخصص:</strong> روانشناسی کودک و نوجوان</p>
+                            <p><strong>سابقه کار:</strong> ۱۲ سال</p>
+                            <p><strong>تحصیلات:</strong> دکترای روانشناسی رشد از دانشگاه شیراز</p>
+                            <p><strong>حوزه‌های تخصصی:</strong> تربیت کودک، مشکلات رفتاری نوجوانان</p>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-card">
+                        <div class="card-header" style="background-color: var(--dark-color);">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="card-body">
+                            <h3>دکتر مریم رضایی</h3>
+                            <p><strong>تخصص:</strong> مشاوره پیش از ازدواج</p>
+                            <p><strong>سابقه کار:</strong> ۱۰ سال</p>
+                            <p><strong>تحصیلات:</strong> دکترای مشاوره خانواده از دانشگاه علامه طباطبایی</p>
+                            <p><strong>حوزه‌های تخصصی:</strong> مشاوره پیش از ازدواج، سازگاری زناشویی</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- فوتر -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>مشاور یار</h2>
+                    <p>مشاوره خانواده هوشمند</p>
+                </div>
+                
+                <div class="footer-info">
+                    <p><strong>مالک سایت:</strong> گروه تولید نرم افزار هاشمی</p>
+                    <p><i class="bi bi-telephone"></i> تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                    <p><i class="bi bi-envelope"></i> ایمیل: info@moshveryar.com</p>
+                    <p><i class="bi bi-geo-alt"></i> آدرس: تهران، خیابان ولیعصر، پلاک ۱۰۰</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>کلیه حقوق این سایت متعلق به گروه تولید نرم افزار هاشمی می‌باشد. © ۱۴۰۳</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // مدیریت منو موبایل
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+            this.innerHTML = mobileMenu.classList.contains('active') ? 
+                '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-list"></i>';
+        });
+        
+        // مدیریت ارسال پیام در چت
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // دکمه‌های پیشنهادی
+        document.querySelectorAll('.suggestion-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const question = this.getAttribute('data-question');
+                document.getElementById('userInput').value = question;
+                sendMessage();
+            });
+        });
+        
+        // تابع ارسال پیام
+        function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (message === '') return;
+            
+            // نمایش پیام کاربر
+            addMessage(message, 'user');
+            
+            // شبیه‌سازی پاسخ هوش مصنوعی
+            simulateAIResponse(message);
+            
+            // پاک کردن فیلد ورودی
+            userInput.value = '';
+            
+            // اسکرول به پایین
+            scrollToBottom();
+        }
+        
+        // افزودن پیام به چت
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            
+            scrollToBottom();
+        }
+        
+        // شبیه‌سازی پاسخ هوش مصنوعی
+        function simulateAIResponse(userMessage) {
+            // نمایش حالت در حال تایپ
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message';
+            typingDiv.id = 'typingIndicator';
+            
+            const typingContent = document.createElement('div');
+            typingContent.className = 'message-content';
+            typingContent.innerHTML = '<i>در حال تایپ...</i>';
+            
+            typingDiv.appendChild(typingContent);
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+            
+            // پاسخ‌های از پیش تعریف شده
+            const responses = {
+                "تعارض": "برای مدیریت تعارض با همسرتان:\n1. در زمان آرامش گفتگو کنید\n2. از زبان \"من\" استفاده کنید (مثلاً \"من احساس می‌کنم...\")\n3. به جای سرزنش، نیازهای خود را بیان کنید\n4. به دنبال راه حل برد-برد باشید\n5. در صورت نیاز از مشاور کمک بگیرید",
+                "فرزند": "برای بهبود رابطه با فرزندان:\n1. زمان باکیفیت و اختصاصی برای هر فرزند بگذارید\n2. شنونده خوبی باشید بدون قضاوت\n3. تشویق و تحسین را فراموش نکنید\n4. قوانین واضح و ثابتی داشته باشید\n5. الگوی رفتاری مناسبی باشید",
+                "استرس": "برای کاهش استرس زندگی مشترک:\n1. برنامه‌های مشترک لذت‌بخش داشته باشید\n2. در کارهای خانه همکاری کنید\n3. از همدیگر حمایت عاطفی داشته باشید\nn4. توقعات واقع‌بینانه از خود و همسرتان داشته باشید\n5. مهارت‌های مدیریت استرس را یاد بگیرید",
+                "نوجوان": "برای ارتباط بهتر با نوجوان:\n1. حریم خصوصی او را محترم بشمارید\n2. بدون قضاوت به حرف‌هایش گوش دهید\n3. در مورد علایقش اطلاعات کسب کنید\n4. او را در تصمیم‌گیری‌ها مشارکت دهید\n5. قوانین خانوادگی را با همکاری هم تعیین کنید",
+                "ازدواج": "برای آمادگی پیش از ازدواج:\n1. در مورد ارزش‌ها، اهداف و انتظارات صحبت کنید\n2. مهارت‌های ارتباطی و حل تعارض را یاد بگیرید\n3. در مورد مسائل مالی و شیوه مدیریت آن توافق کنید\n4. با خانواده همدیگر آشنا شوید\n5. در صورت لزوم از مشاوره پیش از ازدواج استفاده کنید"
+            };
+            
+            // یافتن پاسخ مناسب
+            let aiResponse = "متشکرم از سوال شما. برای این موضوع پیشنهاد می‌کنم:\n1. ابتدا موقعیت را به دقت تحلیل کنید\n2. احساسات خود و طرف مقابل را شناسایی کنید\n3. در زمان مناسب و مکان آرام در مورد موضوع صحبت کنید\n4. به دنبال راه حل‌های عملی و قابل اجرا باشید\n5. در صورت نیاز از متخصصان کمک بگیرید\n\nآیا نیاز به توضیح بیشتر در مورد هر یک از این مراحل دارید؟";
+            
+            const lowerMessage = userMessage.toLowerCase();
+            for (const keyword in responses) {
+                if (lowerMessage.includes(keyword.toLowerCase())) {
+                    aiResponse = responses[keyword];
+                    break;
+                }
+            }
+            
+            // حذف نشانگر در حال تایپ و نمایش پاسخ
+            setTimeout(() => {
+                document.getElementById('typingIndicator').remove();
+                addMessage(aiResponse, 'ai');
+            }, 1500);
+        }
+        
+        // اسکرول به پایین چت
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // دکمه‌های ثبت نام در دوره
+        document.querySelectorAll('.register-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const courseTitle = this.closest('.card-body').querySelector('h3').textContent;
+                alert(`ثبت نام شما در دوره "${courseTitle}" با موفقیت ثبت شد. همکاران ما به زودی با شما تماس خواهند گرفت.`);
+            });
+        });
+    </script>
+</body>
+</html>
